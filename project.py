@@ -51,5 +51,52 @@ def cross_product(first_dfa, second_dfa):
     return dfa
 
 
+def intersect_dfa(first_dfa,second_dfa):
+    int_dfa=[[],[],[],[],[]]
+    for i in first_dfa[0]:
+        for y in second_dfa[0]:
+            int_dfa[0].append((i,y))
+
+    for i in first_dfa[1]:
+        for y in second_dfa[1]:
+            int_dfa[1].append(i)
+            if (i==j):
+                continue
+            int_dfa[1].append(j)
+    int_dfa[3].append((first_dfa[3],second_dfa[3]))
+    int_dfa[4].append((first_dfa[4],second_dfa[4]))
+
+    return int_dfa
+
+def complement(dfa):
+    for i in dfa[0]:
+        for y in dfa[4]:
+            if (i==y):
+                continue
+            dfa[4].append(i)
+    return dfa
+
+def union (first_dfa, second_dfa):
+    int_dfa=[[],[],[],[],[]]
+    for i in first_dfa[0]:
+        for y in second_dfa[0]:
+            int_dfa[0].append((i,y))
+
+    for i in first_dfa[1]:
+        for y in second_dfa[1]:
+            int_dfa[1].append(i)
+            if (i==j):
+                continue
+            int_dfa[1].append(j)
+    int_dfa[3].append((first_dfa[3],second_dfa[3]))
+
+    for i in first_dfa[4]:
+        int_dfa[4].append(i)
+    for i in second_dfa[4]:
+        int_dfa[4].append(i)
+
+
+    return int_dfa
+
 if __name__ == "__main__":
     __init__()
