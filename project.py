@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 def __init__():
     # just for test
     dfa1 = [[0, 1, 2, 3], [0, 1], None, [0], [2]]
@@ -13,9 +11,11 @@ def __init__():
     print("initial state: ", dfa[3])
     print("accept state: ", dfa[4])
 
+
 # TODO: transition
 def cross_product(first_dfa, second_dfa):
     # states, alphabets, transitions, initial state, accept state
+
     dfa1 = (first_dfa[0], first_dfa[1], first_dfa[2], first_dfa[3], first_dfa[4])
     dfa2 = (second_dfa[0], second_dfa[1], second_dfa[2], second_dfa[3], second_dfa[4])
 
@@ -51,52 +51,78 @@ def cross_product(first_dfa, second_dfa):
     return dfa
 
 
-def intersect_dfa(first_dfa,second_dfa):
-    int_dfa=[[],[],[],[],[]]
+def intersect_dfa(first_dfa, second_dfa):
+    int_dfa = [[], [], [], [], []]
     for i in first_dfa[0]:
         for y in second_dfa[0]:
-            int_dfa[0].append((i,y))
+            int_dfa[0].append((i, y))
 
     for i in first_dfa[1]:
         for y in second_dfa[1]:
             int_dfa[1].append(i)
-            if (i==j):
+            if (i == j):
                 continue
             int_dfa[1].append(j)
-    int_dfa[3].append((first_dfa[3],second_dfa[3]))
-    int_dfa[4].append((first_dfa[4],second_dfa[4]))
+    int_dfa[3].append((first_dfa[3], second_dfa[3]))
+    int_dfa[4].append((first_dfa[4], second_dfa[4]))
 
     return int_dfa
+
 
 def complement(dfa):
     for i in dfa[0]:
         for y in dfa[4]:
-            if (i==y):
+            if (i == y):
                 continue
             dfa[4].append(i)
     return dfa
 
-def union (first_dfa, second_dfa):
-    int_dfa=[[],[],[],[],[]]
+
+def checkEmpty(dfa):
+    if dfa[4] == None:
+        return True
+
+    if dfa[3] == dfa[4]:
+        return False
+
+    list = []
+    visited_states = []
+    list.append(dfa[3])
+
+    while (list != None):
+        for i in dfa[2]:
+            if i[0][0] == list[0]:
+                if i[1] not in visited_states and i[1] not in list:
+                    for j in dfa[4]:
+                        if i[1] == dfa[4]:
+                            return False
+                        list.append(i[1])
+        visited_states.append(list[0])
+        list.pop(0)
+    return True
+
+
+def union(first_dfa, second_dfa):
+    int_dfa = [[], [], [], [], []]
     for i in first_dfa[0]:
         for y in second_dfa[0]:
-            int_dfa[0].append((i,y))
+            int_dfa[0].append((i, y))
 
     for i in first_dfa[1]:
-        for y in second_dfa[1]:
+        for j in second_dfa[1]:
             int_dfa[1].append(i)
-            if (i==j):
+            if (i == j):
                 continue
             int_dfa[1].append(j)
-    int_dfa[3].append((first_dfa[3],second_dfa[3]))
+    int_dfa[3].append((first_dfa[3], second_dfa[3]))
 
     for i in first_dfa[4]:
         int_dfa[4].append(i)
     for i in second_dfa[4]:
         int_dfa[4].append(i)
 
-
     return int_dfa
+
 
 if __name__ == "__main__":
     __init__()
