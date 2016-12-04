@@ -1,3 +1,20 @@
+#!/usr/bin/python
+
+class DFA:
+    def __init__(self, s, a, t, i, accept):
+        self.states = s
+        self.alphabet = a
+        self.transitions = t
+        self.initial_state = i
+        self.accept_state = accept
+
+    def findNext(self, state,alphabet):
+        for i in self.transitions:
+            for j in i:
+                if j[0] == state and j[1] == alphabet:
+                    return i[1]
+        return -1
+
 def __init__():
     # just for test
     dfa1 = [[0, 1, 2, 3], [0, 1], None, [0], [2]]
