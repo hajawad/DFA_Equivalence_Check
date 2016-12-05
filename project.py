@@ -1,37 +1,35 @@
 #!/usr/bin/python
+
 # DFA
 class DFA(object):
     states= []
-    alphabets=[]
-    transitions=[]
-    initialState=None
-    acceptState=[]
+    alphabets = []
+    transitions = []
+    initialState = None
+    acceptState = []
     def __init__(self,s,a,t,i,accept):
-        self.states=s
-        self.alphabets=a
-        self.transitions=t
-        self.initialState=i
+        self.states = s
+        self.alphabets = a
+        self.transitions = t
+        self.initialState = i
         self.acceptState = accept
 
    # def makeDfa(self,s,a,t,i,accept):
    #     dfa=DFA(s,a,t,i,accept)
    #     return dfa
 
-
-
-
     #gives the next state given an input.
     def findNext(self,state,alpha):
         for i in self.transitions:
             for j in i:
-                if j[0] ==state and j[1]==alpha:
+                if j[0] == state and j[1] == alpha:
                     return i[1]
         return -1
 
     #Runs a string in a DFA and returns accept or reject
     def simOnInput(self,string):
-        currentState= self.initialState
-        done=False
+        currentState = self.initialState
+        done = False
         for i in string:
             done =False
             if i not in self.alphabets:
@@ -47,12 +45,45 @@ class DFA(object):
         print("initial state: ", self.initialState)
         print("accept state: ", self.acceptState)
 
+    ######Check if a dfa is valid###########
+    ########Checks if the dfa is valid########
+    ######## return true if valid false if not#####
+    ###############################################
+    def isValid(self):
+        ##Checks for missing parts of a dfa
+        if self.alphabets == [] or self.transitions == [] or self.states == [] or self.initialState == None or self.initialState == []:
+            return False
+        count = 0
+        alpha = []
+        ##checks the transition for validity
+        for m in self.states:
+            alpha = list(self.alphabets)
+            for i in self.transitions:
+                if i[0][0] == m:
+                    count = count + 1
+                    # checks if state has a transition with a non valid alphabet
+                    if i[0][1] not in alpha:
+                        return False
+                    alpha.remove(i[0][1])
+                    # checks if there is more transition than there are alphabetes
+                    if count > len(self.alphabets):
+                        return False
+                    # checks for non valid state
+                    if i[0][0] not in self.states:
+                        return False
+            # checks whether there is n number of transtions where n = number of alphabets
+            if count < len(self.alphabets):
+                return False
+            if count == len(self.alphabets):
+                count = 0
+        return True
+
 
 def crossTransition(transitions, transitions1):
     newTransition=[]
     for i in transitions:
         for j in transitions1:
-            if i[0][1]==j[0][1]:
+            if i[0][1] == j[0][1]:
                 newTransition.append([[i[0][0]+j[0][0],i[0][1]],i[1]+j[1]])
 
     return newTransition
@@ -62,7 +93,6 @@ def crossTransition(transitions, transitions1):
 ####### Takes in two dfa's##########
 ###### Outputs union##############
 #################################
-
 def union(dfa1, dfa2):
     states=[]
     alphabets=[]
@@ -76,7 +106,8 @@ def union(dfa1, dfa2):
 
     for i in dfa1.alphabets:
         for j in dfa2.alphabets:
-            alphabets.append(i + j)
+            if(str(i)+ str(j)) not in alphabets:
+                alphabets.append(str(i)+ str(j))
     transitions = crossTransition(dfa1.transitions,dfa2.transitions)
     for i in dfa1.initialState:
         for j in dfa2.initialState:
@@ -111,7 +142,7 @@ def intersect(dfa1, dfa2):
     for i in dfa1.alphabets:
         for j in dfa2.alphabets:
             alphabets.append(i + j)
-    transitions=crossTransition(dfa1.transitions,dfa2.transitions)
+    transitions= crossTransition(dfa1.transitions,dfa2.transitions)
     for i in dfa1.initialState:
         for j in dfa2.initialState:
             startState.append(i+j)
@@ -153,41 +184,28 @@ def empty(dfa):
         return True
     marked=[]
     queue = []
-    queue.append(dfa.initialState)
-    marked.append(dfa.initialState)
+    queue.append(dfa.initialState[0])
+    marked.append(dfa.initialState[0])
     while(len(queue)!=0):
         for i in dfa.transitions:
-            if i[0][0]==queue[0] and i[1] not in marked:
+            if i[0][0]==queue[0]and i[1] not in marked:
                 if i[1] in dfa.acceptState:
                     return False
                 queue.append(i[1])
                 marked.append(i[1])
         queue.pop(0)
-    return False
+    return True
 
 
 ##Inital method MAIN!!!
 def __init__():
-
-    #dfa1 = DFA(['q1', 'q2', 'q3', 'q4'], [0, 1],[[['q1',1],'q2'],[['q2',0],'q1'],[['q1',0],'q1'],[['q2',1],'q3']],
-             #[['q3',1],'q4'],[['q3',0],'q3'],[['q4',1],'q4'],[['q4',0],'q4']],['q1'], ['q3'])
-    #dfa1.printDFA()
-
-    #dfa2 = DFA(['k1', 'k2', 'k3'], [0, 1], #states and alphabets
-            #[[['k1',1],'k2'],[['k2',0],'k1'],[['k1',0],'k1'],[['k2',1],'k3'],[['k3',1],'k3'],[['k3',0],'k3']], #transitions
-            #['k1'], ['k3']) #start and accept state
-
-
-
-
-    dfaa1 = DFA(['q1','q2','q3','q4'],['a','b'],[[['q1','a'],'q2'],[['q1','b'],'q1'],[['q2','a'],'q2'],[['q2','b'],'q3'],[['q3','a'],'q3'],[['q3','b'],'q4'],[['q4','a'],'q4'],[['q4','b'],'q4']],['q1'],['q4'])
-    dfaa2 = DFA(['k1', 'k2', 'k3', 'k4'], ['a', 'b'],\
-                [[['k1', 'a'], 'k2'], [['k1', 'b'], 'k1'], [['k2', 'a'], 'k2'], [['k2', 'b'], 'k3'], [['k3', 'a'], 'k3'],\
-                 [['k3', 'b'], 'k4'], [['k4', 'a'], 'k4'], [['k4', 'b'], 'k4']], ['k1'], ['k4'])
-
-    print(dfaa1)
-    print(dfaa2)
-
+    dfaa1 = DFA(['q1', 'q2', 'q3', 'q4'], ['a', 'b'],
+                [[['q1', 'a'], 'q2'], [['q1', 'b'], 'q1'], [['q2', 'a'], 'q2'], [['q2', 'b'], 'q3'],
+                 [['q3', 'a'], 'q3'], [['q3', 'b'], 'q3'], [['q4', 'a'], 'q4'], [['q4', 'b'], 'q4']], ['q1'], ['q4'])
+    dfaa2 = DFA(['k1', 'k2', 'k3', 'k4'], ['a', 'c'], \
+                [[['k1', 'a'], 'k2'], [['k1', 'b'], 'k1'], [['k2', 'a'], 'k2'], [['k2', 'b'], 'k3'],
+                 [['k3', 'a'], 'k3'], \
+                 [['k3', 'b'], 'k3'], [['k4', 'a'], 'k4'], [['k4', 'b'], 'k4']], ['k1'], ['k4'])
 
     dfaa1c = complement(dfaa1)
     dfaa2c = complement(dfaa2)
@@ -196,21 +214,6 @@ def __init__():
     dfaau = union(dfaa12c, dfaa21c)
 
     print("Equality check: ", empty(dfaau))
-
-    #dfa2.printDFA()
-    #dfa1c = complement(dfa1)
-    #dfa2c = complement(dfa2)
-    #dfa12c = intersect(dfa1,dfa2c)
-    #dfa21c = intersect(dfa2,dfa1c)
-    #dfau = union(dfa12c,dfa21c)
-    #print(empty(dfau))
-    #dfau.printDFA()
-
-    #print("states: ", dfa[0])
-    #print("alphabets: ", dfa[1])
-    #print("transitions: : ", dfa[2])
-    #print("initial state: ", dfa[3])
-    #print("accept state: ", dfa[4])
 
 # TODO: transition
 #def cross_product(first_dfa, second_dfa):
@@ -296,6 +299,8 @@ def __init__():
 #
 #
 #    return int_dfa
+
+
 
 if __name__ == "__main__":
     __init__()
